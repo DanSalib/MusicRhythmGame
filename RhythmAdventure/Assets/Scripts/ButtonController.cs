@@ -8,85 +8,67 @@ public class ButtonController : MonoBehaviour {
 
 
     public Button gameButton;
-    private Stopwatch gameTimer = new Stopwatch();
+    private Stopwatch buttonTimer;
     private float startTime;
-    private float endTime;
-    public float score;
-    public bool buttonClicked;
+    public float duration;
+    public float buttonScore;
 
-    public void NewButton(float start, float end, float x, float y)
+    public delegate void ButtonClick(ButtonController button);
+    public static event ButtonClick OnClicked;
+
+    public void InitializeButton(float start, float x, float y)
     {
-        startTime = start;
-        endTime = end;
-        gameButton.gameObject.transform.localPosition = new Vector3(x, y);
+        this.startTime = start;
+        this.gameButton.gameObject.transform.localPosition = new Vector3(x, y);
+        this.gameButton.gameObject.SetActive(true);
+        this.buttonTimer = new Stopwatch();
+        this.buttonTimer.Start();
     }
-
-	// Use this for initialization
-	void Start () {
-        gameButton.gameObject.SetActive(false);
-        buttonClicked = false;
-        gameTimer.Start();
-	}
 	
 	// Update is called once per frame
-	void Update () {
-		if(gameTimer.ElapsedMilliseconds >= startTime && gameTimer.ElapsedMilliseconds <= endTime)
+	void Update ()
+    {
+        if(this.gameButton != null && this.gameButton.gameObject.activeSelf && this.buttonTimer.ElapsedMilliseconds > this.duration)
         {
-            if (buttonClicked)
-            {
-                gameButton.gameObject.SetActive(false);
-                gameTimer.Stop();
-                gameTimer.Reset();
-                OnDestroy();
-                return;
-            } else
-            {
-                gameButton.image.color = new Vector4(1 - CalcColor(), CalcColor(), 0, 1);
-                gameButton.gameObject.SetActive(true);
-            }
-            
-        }else
+            this.gameButton.gameObject.SetActive(false);
+        }
+        else if (this.gameButton != null && this.gameButton.gameObject.activeSelf)
         {
-            gameButton.gameObject.SetActive(false);
+            this.gameButton.image.color = new Vector4(1 - CalcColor(), CalcColor(), 0, 1);
         }
 	}
 
     public void ButtonClicked()
     {
-        buttonClicked = true;
-        float clickTime = gameTimer.ElapsedMilliseconds - startTime;
-        score = CalcScore(clickTime);
-        UnityEngine.Debug.Log("score = " + score);
-
+        float clickTime = this.buttonTimer.ElapsedMilliseconds;
+        this.buttonTimer.Stop();
+        this.buttonScore = CalcScore(clickTime);
+        this.gameButton.gameObject.SetActive(false);
+        OnClicked(this);
     }
 
     public float CalcPerfectTime()
     {
-        return ((endTime - startTime) / 2f);
+        return ((this.duration) / 2f);
     }
 
     public float CalcScore(float clickTime)
     {
-        UnityEngine.Debug.Log("clickTime = " + clickTime);
-        UnityEngine.Debug.Log("PerfectTime = " + CalcPerfectTime());
         return 1 - Mathf.Abs(clickTime - CalcPerfectTime()) / CalcPerfectTime();
     }
 
     public float CalcColor()
     {
-        if(((gameTimer.ElapsedMilliseconds - startTime) / CalcPerfectTime()) <= 1f)
+        if(((this.buttonTimer.ElapsedMilliseconds) / CalcPerfectTime()) <= 1f)
         {
-            return (gameTimer.ElapsedMilliseconds - startTime) / CalcPerfectTime();
+            return (this.buttonTimer.ElapsedMilliseconds) / CalcPerfectTime();
         }
-        else if ((endTime - gameTimer.ElapsedMilliseconds) / CalcPerfectTime() <= 1)
+        else if ((duration - this.buttonTimer.ElapsedMilliseconds) / CalcPerfectTime() <= 1)
         {
-            return (endTime - gameTimer.ElapsedMilliseconds) / CalcPerfectTime();
+            return (duration - this.buttonTimer.ElapsedMilliseconds) / CalcPerfectTime();
         }
         return 0;
        
     }
-    private void OnDestroy()
-    {
-        Destroy(gameButton.gameObject);
-    }
+
 }
