@@ -16,26 +16,26 @@ public class GameController : MonoBehaviour {
     ButtonController buttonController;
     ButtonController[] buttonMap;
     public int gameScore = 0;
-    public float buttonDelay = 20;
+    public float frameDelay = 20;
 
 	// Use this for initialization
 	void Start () {
         gameTimer.Start();
         ButtonController.OnClicked += OnGameButtonClick;
+        
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
         float currentGameTime = gameTimer.ElapsedMilliseconds;
-        int buttonIndex = isTimeContainedInRange(currentGameTime);
-        if (buttonIndex != -1)
+        if (buttonStartTimes.Count > 0 && currentGameTime > buttonStartTimes[0])
         {
-            CreateButton(currentGameTime, buttonXPositions[buttonIndex], buttonYPositions[buttonIndex]);
+            CreateButton(currentGameTime, buttonXPositions[0], buttonYPositions[0]);
 
-            buttonStartTimes.RemoveAt(buttonIndex);
-            buttonXPositions.RemoveAt(buttonIndex);
-            buttonYPositions.RemoveAt(buttonIndex);
+            buttonStartTimes.RemoveAt(0);
+            buttonXPositions.RemoveAt(0);
+            buttonYPositions.RemoveAt(0);
         }
 	}
 
@@ -54,26 +54,6 @@ public class GameController : MonoBehaviour {
         UpdateScoreLabel(gameScore);
     }
 
-    public void InitializeMap()
-    {
-        for(int i = 0; i < buttonStartTimes.Count; ++i)
-        {
-            CreateButton(buttonStartTimes[i], buttonXPositions[i], buttonYPositions[i]);
-        }
-    }
-
-    private int isTimeContainedInRange(float value)
-    {
-        for (int i = 0; i < buttonDelay; ++i)
-        {
-            if (this.buttonStartTimes.Contains(value + i))
-            {
-                return buttonStartTimes.IndexOf(value + i);
-            }
-        }
-        return -1;
-    }
-
     private void UpdateScoreLabel(int scoreValue)
     {
         this.scoreLabel.text = "score: " + scoreValue;
@@ -83,5 +63,19 @@ public class GameController : MonoBehaviour {
     {
         ButtonController.OnClicked -= OnGameButtonClick;
     }
+
+    /* OUTDATED
+    private int isTimeContainedInRange(float value)
+    {
+        for (int i = 0; i < frameDelay; ++i)
+        {
+            if (this.buttonStartTimes.Contains(value + i))
+            {
+                return buttonStartTimes.IndexOf(value + i);
+            }
+        }
+        return -1;
+    }
+    */
 
 }
