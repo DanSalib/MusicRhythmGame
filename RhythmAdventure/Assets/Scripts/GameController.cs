@@ -8,15 +8,17 @@ public class GameController : MonoBehaviour {
 
     public GameObject buttonPrefab;
     public Text scoreLabel;
+
     public List<float> buttonStartTimes;
     public List<float> buttonXPositions;
     public List<float> buttonYPositions;
+
     public float gameSpeed;
-    public Stopwatch gameTimer = new Stopwatch();
-    ButtonController buttonController;
-    ButtonController[] buttonMap;
     public int gameScore = 0;
-    public float frameDelay = 20;
+
+    public Stopwatch gameTimer = new Stopwatch();
+
+    ButtonController buttonController;
 
 	// Use this for initialization
 	void Start () {

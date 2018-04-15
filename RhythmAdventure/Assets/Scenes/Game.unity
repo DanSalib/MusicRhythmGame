@@ -388,25 +388,25 @@ MonoBehaviour:
   scoreLabel: {fileID: 484801514}
   buttonStartTimes:
   - 1000
-  - 1500
-  - 2000
-  - 2500
-  - 3000
+  - 1010
+  - 1040
+  - 1100
+  - 1111
   buttonXPositions:
-  - -250
+  - -150
+  - 0
+  - 150
   - 0
   - 0
-  - 0
-  - 250
   buttonYPositions:
   - 0
-  - 250
+  - 150
   - 0
-  - -250
+  - -150
   - 0
   gameSpeed: 2000
   gameScore: 0
-  buttonDelay: 20
+  frameDelay: 20
 --- !u!1 &1874135905
 GameObject:
   m_ObjectHideFlags: 0
