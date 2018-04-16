@@ -19,7 +19,7 @@ public class ButtonController : MonoBehaviour {
     public void InitializeButton(float start, float x, float y)
     {
         this.startTime = start;
-        this.gameButton.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
+        this.gameButton.transform.SetParent(this.gameObject.transform, false);
         this.gameButton.gameObject.transform.localPosition = new Vector3(x, y);
         this.gameButton.gameObject.SetActive(true);
         this.buttonTimer = new Stopwatch();
