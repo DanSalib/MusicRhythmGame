@@ -46,6 +46,8 @@ public class ButtonController : MonoBehaviour {
         this.buttonScore = CalcScore(clickTime);
         this.gameButton.gameObject.SetActive(false);
         OnClicked(this);
+
+        Destroy(this.gameObject);
     }
 
     public float CalcPerfectTime()
