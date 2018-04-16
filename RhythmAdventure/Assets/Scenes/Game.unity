@@ -386,8 +386,8 @@ MonoBehaviour:
   buttonPrefab: {fileID: 1701095029750306, guid: 47f1496fd930d0046a4931b92ac4e442,
     type: 2}
   scoreLabel: {fileID: 484801514}
+  gameDataFileName: test1.json
   gameSpeed: 2000
-  gameScore: 0
 --- !u!1 &1093309048
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,10 @@
-﻿[System.Serializable]
+﻿using System.Collections;
+using System.Collections.Generic;
+
+[System.Serializable]
 public class ButtonData
 {
-    public ButtonItem[] buttons;
+    public List<ButtonItem> buttons = new List<ButtonItem>();
 }
 
 [System.Serializable]

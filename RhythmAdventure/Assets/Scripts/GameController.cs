@@ -6,56 +6,62 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
-
-
-public class GameController : MonoBehaviour {
-
+public class GameController : MonoBehaviour
+{
     public GameObject buttonPrefab;
     public Text scoreLabel;
-
-    private List<float> buttonStartTimes = new List<float>();
-    private List<float> buttonXPositions = new List<float>();
-    private List<float> buttonYPositions = new List<float>();
-
-    public Dictionary<float, float[]> buttonMap = new Dictionary<float, float[]>();
-
+    public string gameDataFileName;
     public float gameSpeed;
-    public int gameScore = 0;
-    public Stopwatch gameTimer = new Stopwatch();
+
+    private int gameScore = 0;
+    private Stopwatch gameTimer = new Stopwatch();
+
+    public List<float> buttonStartTimes = new List<float>();
+    public List<float> buttonXPositions = new List<float>();
+    public List<float> buttonYPositions = new List<float>();
 
     ButtonController buttonController;
 
-    private string gameDataFileName = "data.json";
-
-    private
-
 	// Use this for initialization
 	void Start () {
-        if(!LoadGameData())
-        {
-            return;
-        }
+        //if(!this.LoadGameData())
+        //{
+        //    return;
+        //}
 
-        gameTimer.Start();
+        this.gameTimer.Start();
         ButtonController.OnClicked += OnGameButtonClick;
         
     }
+	
+	// Update is called once per frame
+	void Update ()
+    {
+        if (this.buttonStartTimes.Count > 0 && this.gameTimer.ElapsedMilliseconds > this.buttonStartTimes[0])
+        {
+            this.CreateButton(gameTimer.ElapsedMilliseconds, buttonXPositions[0], buttonYPositions[0]);
+
+            this.buttonStartTimes.RemoveAt(0);
+            this.buttonXPositions.RemoveAt(0);
+            this.buttonYPositions.RemoveAt(0);
+        }
+	}
 
     private bool LoadGameData()
     {
         string filePath = Path.Combine(Application.streamingAssetsPath, gameDataFileName);
 
-        if(File.Exists(filePath))
+        if (File.Exists(filePath))
         {
             string dataAsJson = File.ReadAllText(filePath);
 
             ButtonData buttonData = JsonUtility.FromJson<ButtonData>(dataAsJson);
 
-            for (int i = 0; i < buttonData.buttons.Length; ++i)
+            for (int i = 0; i < buttonData.buttons.Count; ++i)
             {
-                buttonStartTimes.Add(buttonData.buttons[i].time);
-                buttonXPositions.Add(buttonData.buttons[i].position[0]);
-                buttonYPositions.Add(buttonData.buttons[i].position[1]);
+                this.buttonStartTimes.Add(buttonData.buttons[i].time);
+                this.buttonXPositions.Add(buttonData.buttons[i].position[0]);
+                this.buttonYPositions.Add(buttonData.buttons[i].position[1]);
             }
 
             return true;
@@ -63,19 +69,6 @@ public class GameController : MonoBehaviour {
 
         return false;
     }
-	
-	// Update is called once per frame
-	void Update ()
-    {
-        if (buttonStartTimes.Count > 0 && gameTimer.ElapsedMilliseconds > buttonStartTimes[0])
-        {
-            CreateButton(gameTimer.ElapsedMilliseconds, buttonXPositions[0], buttonYPositions[0]);
-
-            buttonStartTimes.RemoveAt(0);
-            buttonXPositions.RemoveAt(0);
-            buttonYPositions.RemoveAt(0);
-        }
-	}
 
     public void CreateButton(float startTime, float x, float y)
     {
@@ -89,7 +82,7 @@ public class GameController : MonoBehaviour {
     public void OnGameButtonClick(ButtonController button)
     {
         this.gameScore += Mathf.RoundToInt(button.buttonScore * 1000);
-        UpdateScoreLabel(gameScore);
+        this.UpdateScoreLabel(gameScore);
     }
 
     private void UpdateScoreLabel(int scoreValue)
@@ -101,19 +94,4 @@ public class GameController : MonoBehaviour {
     {
         ButtonController.OnClicked -= OnGameButtonClick;
     }
-
-    /* OUTDATED
-    private int isTimeContainedInRange(float value)
-    {
-        for (int i = 0; i < frameDelay; ++i)
-        {
-            if (this.buttonStartTimes.Contains(value + i))
-            {
-                return buttonStartTimes.IndexOf(value + i);
-            }
-        }
-        return -1;
-    }
-    */
-
 }
