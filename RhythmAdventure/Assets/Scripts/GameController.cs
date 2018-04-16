@@ -53,15 +53,8 @@ public class GameController : MonoBehaviour {
 
             for (int i = 0; i < buttonData.buttons.Length; ++i)
             {
-
-                UnityEngine.Debug.Log("button time = " + buttonData.buttons[i].time);
-                UnityEngine.Debug.Log("button pos = " + buttonData.buttons[i].position[0]);
-                UnityEngine.Debug.Log("button pos2 = " + buttonData.buttons[i].position[1]);
-
                 buttonStartTimes.Add(buttonData.buttons[i].time);
-
                 buttonXPositions.Add(buttonData.buttons[i].position[0]);
-
                 buttonYPositions.Add(buttonData.buttons[i].position[1]);
             }
 
@@ -74,10 +67,9 @@ public class GameController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        float currentGameTime = gameTimer.ElapsedMilliseconds;
-        if (buttonStartTimes.Count > 0 && currentGameTime > buttonStartTimes[0])
+        if (buttonStartTimes.Count > 0 && gameTimer.ElapsedMilliseconds > buttonStartTimes[0])
         {
-            CreateButton(currentGameTime, buttonXPositions[0], buttonYPositions[0]);
+            CreateButton(gameTimer.ElapsedMilliseconds, buttonXPositions[0], buttonYPositions[0]);
 
             buttonStartTimes.RemoveAt(0);
             buttonXPositions.RemoveAt(0);
