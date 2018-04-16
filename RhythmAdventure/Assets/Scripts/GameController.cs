@@ -16,18 +16,18 @@ public class GameController : MonoBehaviour
     private int gameScore = 0;
     private Stopwatch gameTimer = new Stopwatch();
 
-    public List<float> buttonStartTimes = new List<float>();
-    public List<float> buttonXPositions = new List<float>();
-    public List<float> buttonYPositions = new List<float>();
+    private List<float> buttonStartTimes = new List<float>();
+    private List<float> buttonXPositions = new List<float>();
+    private List<float> buttonYPositions = new List<float>();
 
     ButtonController buttonController;
 
 	// Use this for initialization
 	void Start () {
-        //if(!this.LoadGameData())
-        //{
-        //    return;
-        //}
+        if(!this.LoadGameData())
+        {
+            return;
+        }
 
         this.gameTimer.Start();
         ButtonController.OnClicked += OnGameButtonClick;
