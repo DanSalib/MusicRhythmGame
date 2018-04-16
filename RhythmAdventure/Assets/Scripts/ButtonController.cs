@@ -32,6 +32,7 @@ public class ButtonController : MonoBehaviour {
         if(this.gameButton != null && this.gameButton.gameObject.activeSelf && this.buttonTimer.ElapsedMilliseconds > this.duration)
         {
             this.gameButton.gameObject.SetActive(false);
+            Destroy(this.gameObject);
         }
         else if (this.gameButton != null && this.gameButton.gameObject.activeSelf)
         {

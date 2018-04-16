@@ -8,13 +8,15 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public GameController instance;
+
     public GameObject buttonPrefab;
     public Text scoreLabel;
     public string gameDataFileName;
     public float gameSpeed;
 
     private int gameScore = 0;
-    private Stopwatch gameTimer = new Stopwatch();
+    public Stopwatch gameTimer = new Stopwatch();
 
     private List<float> buttonStartTimes = new List<float>();
     private List<float> buttonXPositions = new List<float>();

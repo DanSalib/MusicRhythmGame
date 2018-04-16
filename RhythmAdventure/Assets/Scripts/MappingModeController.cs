@@ -14,6 +14,7 @@ public class MappingModeController : MonoBehaviour
     public Text positionLabel;
     public Text timerLabel;
     public Text playLabel;
+    public AudioSource audio;
 
     private Stopwatch mapTimer = new Stopwatch();
     
@@ -48,11 +49,21 @@ public class MappingModeController : MonoBehaviour
     {
         if (this.mapTimer.IsRunning)
         {
+            if(audio.clip != null)
+            {
+                audio.Pause();
+            }
+
             this.mapTimer.Stop();
             this.playLabel.text = "Start";
         }
         else
         {
+            if (audio.clip != null)
+            {
+                audio.Play();
+            }
+
             this.mapTimer.Start();
             this.playLabel.text = "Stop";
         }
