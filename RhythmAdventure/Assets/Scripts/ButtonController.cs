@@ -9,6 +9,9 @@ public class ButtonController : MonoBehaviour {
 
     public Button gameButton;
     private Stopwatch buttonTimer;
+    public Text buttonText;
+    public Image indicator;
+
     private float startTime;
     public float duration;
     public float buttonScore;
@@ -21,12 +24,14 @@ public class ButtonController : MonoBehaviour {
         this.transform.SetParent(GameObject.FindGameObjectWithTag("GameController").transform, false);
         this.transform.SetAsFirstSibling();
 
-        this.startTime = start;
         this.gameButton.transform.SetParent(this.gameObject.transform, false);
         this.gameButton.gameObject.transform.localPosition = new Vector3(x, y);
         this.gameButton.gameObject.SetActive(true);
+
+        this.startTime = start;
         this.buttonTimer = new Stopwatch();
         this.buttonTimer.Start();
+        StartCoroutine(this.ScaleIndicator());
     }
 	
 	// Update is called once per frame
@@ -37,10 +42,10 @@ public class ButtonController : MonoBehaviour {
             this.gameButton.gameObject.SetActive(false);
             Destroy(this.gameObject);
         }
-        else if (this.gameButton != null && this.gameButton.gameObject.activeSelf)
-        {
-            this.gameButton.image.color = new Vector4(1 - CalcColor(), CalcColor(), 0, 1);
-        }
+        //else if (this.gameButton != null && this.gameButton.gameObject.activeSelf)
+        //{
+        //    this.gameButton.image.color = new Vector4(1 - CalcColor(), CalcColor(), 0, 1);
+        //}
 	}
 
     public void ButtonClicked()
@@ -76,6 +81,21 @@ public class ButtonController : MonoBehaviour {
         }
         return 0;
        
+    }
+
+    private IEnumerator ScaleIndicator()
+    {
+        Vector3 originalScale = this.indicator.transform.localScale;
+        Vector3 destinationScale = new Vector3(0.6f, 0.6f, 0.6f);
+
+        if (this.buttonTimer.IsRunning)
+        {
+            while(this.buttonTimer.ElapsedMilliseconds < (this.duration/2f))
+            {
+                this.indicator.transform.localScale = Vector3.Lerp(originalScale, destinationScale, this.buttonTimer.ElapsedMilliseconds / (this.duration / 2f));
+                yield return null;
+            }
+        }
     }
 
 }
