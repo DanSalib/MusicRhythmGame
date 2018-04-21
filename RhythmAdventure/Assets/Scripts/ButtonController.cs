@@ -21,7 +21,6 @@ public class ButtonController : MonoBehaviour {
 
     public void InitializeButton(float start, float x, float y)
     {
-        this.transform.SetParent(GameObject.FindGameObjectWithTag("GameController").transform, false);
         this.transform.SetAsFirstSibling();
 
         this.gameButton.transform.SetParent(this.gameObject.transform, false);

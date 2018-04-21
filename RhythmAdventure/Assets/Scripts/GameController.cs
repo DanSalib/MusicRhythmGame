@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     public float gameSpeed;
 
     private int gameScore = 0;
+    private int roundedButtonCount;
     public Stopwatch gameTimer = new Stopwatch();
 
     private List<float> buttonStartTimes = new List<float>();
@@ -33,7 +34,8 @@ public class GameController : MonoBehaviour
 
         this.gameTimer.Start();
         ButtonController.OnClicked += OnGameButtonClick;
-        
+
+        this.roundedButtonCount = this.ButtonCountInitializer();
     }
 	
 	// Update is called once per frame
@@ -41,11 +43,13 @@ public class GameController : MonoBehaviour
     {
         if (this.buttonStartTimes.Count > 0 && this.gameTimer.ElapsedMilliseconds > this.buttonStartTimes[0])
         {
-            this.CreateButton(gameTimer.ElapsedMilliseconds, buttonXPositions[0], buttonYPositions[0]);
+            int buttonNum = 4 - this.roundedButtonCount % 4;
+            this.CreateButton(gameTimer.ElapsedMilliseconds, buttonXPositions[0], buttonYPositions[0], buttonNum);
 
             this.buttonStartTimes.RemoveAt(0);
             this.buttonXPositions.RemoveAt(0);
             this.buttonYPositions.RemoveAt(0);
+            this.roundedButtonCount--;
         }
 	}
 
@@ -72,11 +76,12 @@ public class GameController : MonoBehaviour
         return false;
     }
 
-    public void CreateButton(float startTime, float x, float y)
+    public void CreateButton(float startTime, float x, float y, int buttonNum)
     {
         GameObject button = Instantiate(buttonPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
-        button.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
+        button.transform.SetParent(GameObject.FindGameObjectWithTag("GameController").transform, false);
         buttonController = button.GetComponent<ButtonController>();
+        buttonController.buttonText.text = buttonNum.ToString();
         buttonController.duration = gameSpeed;
         buttonController.InitializeButton(startTime, x, y);
     }
@@ -90,6 +95,13 @@ public class GameController : MonoBehaviour
     private void UpdateScoreLabel(int scoreValue)
     {
         this.scoreLabel.text = "score: " + scoreValue;
+    }
+
+    private int ButtonCountInitializer()
+    {
+        int count = this.buttonStartTimes.Count;
+        int nearestMultiple = (int)System.Math.Round((count / (double)4), System.MidpointRounding.AwayFromZero) * 4;
+        return nearestMultiple - 1;
     }
 
     private void OnDestroy()
