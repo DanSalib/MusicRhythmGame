@@ -13,7 +13,7 @@ public class MusicController : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        //LoadMusic();
+        LoadMusic();
 
 	    if(audio.clip != null)
         {
@@ -29,12 +29,10 @@ public class MusicController : MonoBehaviour
 
     private void LoadMusic()
     {
-        string filePath = Path.Combine(Application.streamingAssetsPath, clipName);
-
-        WWW www = new WWW(filePath);
-        if(www != null)
+        AudioClip clip = Resources.Load(clipName) as AudioClip;
+        if(clip != null)
         {
-            this.audio.clip = www.GetAudioClip();
+            this.audio.clip = clip;
         }
     }
 }

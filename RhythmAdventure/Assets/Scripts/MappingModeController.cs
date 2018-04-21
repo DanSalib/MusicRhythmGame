@@ -14,14 +14,25 @@ public class MappingModeController : MonoBehaviour
     public Text positionLabel;
     public Text timerLabel;
     public Text playLabel;
+    public InputField speedInput;
     public AudioSource audio;
 
     private Stopwatch mapTimer = new Stopwatch();
     
     private SortedList<float, float[]> mappedButtons = new SortedList<float, float[]>();
-	
-	// Update is called once per frame
-	void Update ()
+
+    private void Start()
+    {
+        this.SetupAudioClip();
+    }
+
+    private void Awake()
+    {
+        this.speedInput.text = "1";
+    }
+
+    // Update is called once per frame
+    private void Update ()
     {
         UpdatePositionLabel(Input.mousePosition.x, Input.mousePosition.y);
         UpdateTimerLabel();
@@ -31,7 +42,7 @@ public class MappingModeController : MonoBehaviour
             float[] position = new float[2];
             position[0] = Input.mousePosition.x;
             position[1] = Input.mousePosition.y;
-            mappedButtons.Add(this.mapTimer.ElapsedMilliseconds, position);
+            mappedButtons.Add(this.mapTimer.ElapsedMilliseconds + this.getSpeedInputVal(), position);
         }
 	}
 
@@ -49,7 +60,7 @@ public class MappingModeController : MonoBehaviour
     {
         if (this.mapTimer.IsRunning)
         {
-            if(audio.clip != null)
+            if(this.audio.clip != null)
             {
                 audio.Pause();
             }
@@ -63,10 +74,24 @@ public class MappingModeController : MonoBehaviour
             {
                 audio.Play();
             }
+            if (this.speedInput != null)
+            {
+                this.speedInput.gameObject.SetActive(false);
+            }
 
             this.mapTimer.Start();
             this.playLabel.text = "Stop";
         }
+    }
+
+    private int getSpeedInputVal()
+    {
+        int speed = 1;
+        if (this.speedInput != null)
+        {
+            int.TryParse(this.speedInput.text, out speed);
+        }
+        return (speed*1000);
     }
 
     public void OnMapFinish()
@@ -90,5 +115,16 @@ public class MappingModeController : MonoBehaviour
             string dataAsJson = JsonUtility.ToJson(buttonData);
             File.WriteAllText(filePath, dataAsJson);
         }
+    }
+
+    private void SetupAudioClip()
+    {
+        string filePath = EditorUtility.OpenFilePanel("Select music file", Application.dataPath + "/Resources", "mp3");
+        string[] path = filePath.Split('/');
+        string clipName = path[path.Length - 1].Split('.')[0];
+ 
+        AudioClip clip = Resources.Load(clipName) as AudioClip;
+
+        this.audio.clip = clip;
     }
 }
