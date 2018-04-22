@@ -17,9 +17,12 @@ public class MappingModeController : MonoBehaviour
     public InputField speedInput;
     public AudioSource audio;
 
+    public GameObject buttonPrefab;
+
     private Stopwatch mapTimer = new Stopwatch();
     
     private SortedList<float, float[]> mappedButtons = new SortedList<float, float[]>();
+    private SortedList<float, MappingButton> displayingButtons = new SortedList<float, MappingButton>();
 
     private void Start()
     {
@@ -37,18 +40,92 @@ public class MappingModeController : MonoBehaviour
         UpdatePositionLabel(Input.mousePosition.x, Input.mousePosition.y);
         UpdateTimerLabel();
 
-        if(this.mapTimer.IsRunning && Input.GetMouseButtonDown(0))
+        if (this.mapTimer.IsRunning && Input.GetMouseButtonDown(0))
         {
             float[] position = new float[2];
             position[0] = Input.mousePosition.x;
             position[1] = Input.mousePosition.y;
-            mappedButtons.Add(this.mapTimer.ElapsedMilliseconds + this.getSpeedInputVal(), position);
+            mappedButtons.Add(this.mapTimer.ElapsedMilliseconds + this.GetSpeedInputVal(), position);
+
+            CreateButton(position[0], position[1]);
         }
 	}
 
     private void UpdatePositionLabel(float x, float y)
     {
         this.positionLabel.text = "x: " + x + ", y: " + y;
+    }
+
+    private void CreateButton(float x, float y)
+    {
+        GameObject button = Instantiate(buttonPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
+        button.transform.SetParent(this.transform, false);
+
+        MappingButton mappingButton = button.GetComponent<MappingButton>();
+        mappingButton.duration = this.GetSpeedInputVal();
+        mappingButton.InitializeButton(x, y);
+
+        //this.displayingButtons.Add(clickTime, mappingButton);
+    }
+
+    private void ButtonsToHide(float start, float end)
+    {
+        foreach(KeyValuePair<float, MappingButton> pair in displayingButtons)
+        {
+            if ((pair.Key - GetSpeedInputVal()) < start)
+            {
+                Destroy(pair.Value);
+            }
+            else if (pair.Key + GetSpeedInputVal() > end)
+            {
+                Destroy(pair.Value);
+            }
+        }
+    }
+
+    private void ButtonsToShow(float start, float end)
+    {
+        int buttonNum = this.RoundTo4(this.mappedButtons.Count) - 1;
+        int guessIndex = Mathf.RoundToInt(start / this.mappedButtons.Keys[this.mappedButtons.Count - 1]);
+        if (this.mappedButtons.Keys[guessIndex] > start)
+        {
+            int i = guessIndex;
+            while (this.mappedButtons.Keys[i] > start)
+            {
+                i--;
+            }
+            while(this.mappedButtons.Keys[i] < end)
+            {
+                float time = this.mappedButtons.Keys[i];
+                if (this.displayingButtons.ContainsKey(time))
+                {
+                    continue;
+                }
+                this.CreateButton(this.mappedButtons[time][0], this.mappedButtons[time][1]);
+                buttonNum++;
+                i++;
+            }
+        }
+        else if (this.mappedButtons.Keys[guessIndex] < start)
+        {
+            int i = guessIndex;
+            while (this.mappedButtons.Keys[i] < start)
+            {
+                i++;
+            }
+            while (this.mappedButtons.Keys[i] < end)
+            {
+                float time = this.mappedButtons.Keys[i];
+                if (this.displayingButtons.ContainsKey(time))
+                {
+                    continue;
+                }
+                this.CreateButton(this.mappedButtons[time][0], this.mappedButtons[time][1]);
+                buttonNum++;
+                i++;
+            }
+        }
+
     }
 
     private void UpdateTimerLabel()
@@ -84,7 +161,7 @@ public class MappingModeController : MonoBehaviour
         }
     }
 
-    private int getSpeedInputVal()
+    private int GetSpeedInputVal()
     {
         int speed = 1;
         if (this.speedInput != null)
@@ -126,5 +203,11 @@ public class MappingModeController : MonoBehaviour
         AudioClip clip = Resources.Load(clipName) as AudioClip;
 
         this.audio.clip = clip;
+    }
+
+    private int RoundTo4(int num)
+    {
+        int nearestMultiple = (int)System.Math.Round((num / (double)4), System.MidpointRounding.AwayFromZero) * 4;
+        return nearestMultiple;
     }
 }

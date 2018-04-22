@@ -23,8 +23,6 @@ public class GameController : MonoBehaviour
     private List<float> buttonXPositions = new List<float>();
     private List<float> buttonYPositions = new List<float>();
 
-    ButtonController buttonController;
-
 	// Use this for initialization
 	void Start () {
         if(!this.LoadGameData())
@@ -80,7 +78,7 @@ public class GameController : MonoBehaviour
     {
         GameObject button = Instantiate(buttonPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         button.transform.SetParent(GameObject.FindGameObjectWithTag("GameController").transform, false);
-        buttonController = button.GetComponent<ButtonController>();
+        ButtonController buttonController = button.GetComponent<ButtonController>();
         buttonController.buttonText.text = buttonNum.ToString();
         buttonController.duration = gameSpeed;
         buttonController.InitializeButton(startTime, x, y);

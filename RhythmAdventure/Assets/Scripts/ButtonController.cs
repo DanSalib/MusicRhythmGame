@@ -4,9 +4,8 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonController : MonoBehaviour {
-
-
+public class ButtonController : MonoBehaviour
+{
     public Button gameButton;
     private Stopwatch buttonTimer;
     public Text buttonText;
@@ -24,7 +23,7 @@ public class ButtonController : MonoBehaviour {
         this.transform.SetAsFirstSibling();
 
         this.gameButton.transform.SetParent(this.gameObject.transform, false);
-        this.gameButton.gameObject.transform.localPosition = new Vector3(x, y);
+        this.gameButton.gameObject.transform.position = new Vector3(x, y);
         this.gameButton.gameObject.SetActive(true);
 
         this.startTime = start;

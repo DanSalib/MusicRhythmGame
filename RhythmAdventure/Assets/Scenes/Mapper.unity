@@ -599,11 +599,11 @@ RectTransform:
   m_Father: {fileID: 1874135909}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.000015258789}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &662227066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -620,6 +620,8 @@ MonoBehaviour:
   playLabel: {fileID: 1275453542}
   speedInput: {fileID: 2079798922}
   audio: {fileID: 201526090}
+  buttonPrefab: {fileID: 1859167875053282, guid: af35c3727c40e0c45a3c6b295f51b6e3,
+    type: 2}
 --- !u!1 &730883786
 GameObject:
   m_ObjectHideFlags: 0
