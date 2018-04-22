@@ -19,12 +19,15 @@ public class MappingModeController : MonoBehaviour
 
     public GameObject buttonPrefab;
     public float scaleSensitivity;
+
+    private float curTime;
+    private float[] curPosition = new float[2];
     private MappingButton curButton;
     private Vector3 lastPosition = new Vector3();
 
     private Stopwatch mapTimer = new Stopwatch();
     
-    private SortedList<float, float[]> mappedButtons = new SortedList<float, float[]>();
+    private SortedDictionary<float, ButtonItem> mappedButtons = new SortedDictionary<float, ButtonItem>();
     private SortedList<float, MappingButton> displayingButtons = new SortedList<float, MappingButton>();
 
     private void Start()
@@ -45,28 +48,39 @@ public class MappingModeController : MonoBehaviour
 
         if (this.mapTimer.IsRunning && Input.GetMouseButtonDown(0))
         {
-            float[] position = new float[2];
-            position[0] = Input.mousePosition.x;
-            position[1] = Input.mousePosition.y;
-            this.mappedButtons.Add(this.mapTimer.ElapsedMilliseconds + this.GetSpeedInputVal(), position);
+            this.curPosition[0] = Input.mousePosition.x;
+            this.curPosition[1] = Input.mousePosition.y;
+            this.curTime = this.mapTimer.ElapsedMilliseconds;
 
-            this.curButton = this.CreateButton(position[0], position[1]);
+            this.curButton = this.CreateButton(this.curPosition[0], this.curPosition[1]);
             this.lastPosition = Input.mousePosition;
         }
 
-        if(Input.GetMouseButton(0) && this.curButton != null)
+        if (Input.GetMouseButton(0) && this.curButton != null)
         {
             Vector3 diffPos = Input.mousePosition - this.lastPosition;
 
-            this.curButton.dragRegion.gameObject.transform.localScale += new Vector3(((Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y)) * 1/60f * scaleSensitivity), 0f, 0f);
+            this.curButton.dragRegion.gameObject.transform.localScale += new Vector3(((Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y)) * 1 / 60f * scaleSensitivity), 0f, 0f);
             this.curButton.dragRegion.gameObject.transform.position += ((diffPos) * scaleSensitivity * 0.75f);
 
             this.curButton.InitializeLastButton(Input.mousePosition.x, Input.mousePosition.y);
             this.lastPosition = Input.mousePosition;
         }
 
-        else if(Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(0) && curButton != null)
         {
+
+            ButtonItem button = new ButtonItem();
+            button.time = this.curTime + this.GetSpeedInputVal();
+
+            button.position[0] = this.curPosition[0];
+            button.position[1] = this.curPosition[1];
+            button.isDrag = this.curButton.isDrag;
+            button.endPosition[0] = this.lastPosition.x;
+            button.endPosition[1] = this.lastPosition.y;
+
+            this.mappedButtons.Add(button.time, button);
+
             this.curButton = null;
             this.lastPosition = new Vector3();
         }
@@ -102,51 +116,6 @@ public class MappingModeController : MonoBehaviour
                 Destroy(pair.Value);
             }
         }
-    }
-
-    private void ButtonsToShow(float start, float end)
-    {
-        int buttonNum = this.RoundTo4(this.mappedButtons.Count) - 1;
-        int guessIndex = Mathf.RoundToInt(start / this.mappedButtons.Keys[this.mappedButtons.Count - 1]);
-        if (this.mappedButtons.Keys[guessIndex] > start)
-        {
-            int i = guessIndex;
-            while (this.mappedButtons.Keys[i] > start)
-            {
-                i--;
-            }
-            while(this.mappedButtons.Keys[i] < end)
-            {
-                float time = this.mappedButtons.Keys[i];
-                if (this.displayingButtons.ContainsKey(time))
-                {
-                    continue;
-                }
-                this.CreateButton(this.mappedButtons[time][0], this.mappedButtons[time][1]);
-                buttonNum++;
-                i++;
-            }
-        }
-        else if (this.mappedButtons.Keys[guessIndex] < start)
-        {
-            int i = guessIndex;
-            while (this.mappedButtons.Keys[i] < start)
-            {
-                i++;
-            }
-            while (this.mappedButtons.Keys[i] < end)
-            {
-                float time = this.mappedButtons.Keys[i];
-                if (this.displayingButtons.ContainsKey(time))
-                {
-                    continue;
-                }
-                this.CreateButton(this.mappedButtons[time][0], this.mappedButtons[time][1]);
-                buttonNum++;
-                i++;
-            }
-        }
-
     }
 
     private void UpdateTimerLabel()
@@ -196,14 +165,9 @@ public class MappingModeController : MonoBehaviour
     {
         ButtonData buttonData = new ButtonData();
 
-        foreach(KeyValuePair<float, float[]> pair in this.mappedButtons)
+        foreach(KeyValuePair<float, ButtonItem> pair in this.mappedButtons)
         {
-            ButtonItem button = new ButtonItem();
-            button.time = pair.Key;
-            button.position[0] = pair.Value[0];
-            button.position[1] = pair.Value[1];
-
-            buttonData.buttons.Add(button);
+            buttonData.buttons.Add(pair.Value);
         }
 
         string filePath = EditorUtility.SaveFilePanel("Save localization data file", Application.streamingAssetsPath, "", "json");
@@ -224,11 +188,5 @@ public class MappingModeController : MonoBehaviour
         AudioClip clip = Resources.Load(clipName) as AudioClip;
 
         this.audio.clip = clip;
-    }
-
-    private int RoundTo4(int num)
-    {
-        int nearestMultiple = (int)System.Math.Round((num / (double)4), System.MidpointRounding.AwayFromZero) * 4;
-        return nearestMultiple;
     }
 }

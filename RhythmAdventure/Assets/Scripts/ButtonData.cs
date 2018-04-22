@@ -12,4 +12,6 @@ public class ButtonItem
 {
     public float time;
     public float[] position = new float[2];
+    public bool isDrag;
+    public float[] endPosition = new float[2];
 }
