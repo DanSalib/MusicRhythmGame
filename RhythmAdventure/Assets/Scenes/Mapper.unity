@@ -622,6 +622,7 @@ MonoBehaviour:
   audio: {fileID: 201526090}
   buttonPrefab: {fileID: 1859167875053282, guid: af35c3727c40e0c45a3c6b295f51b6e3,
     type: 2}
+  scaleSensitivity: 0.62
 --- !u!1 &730883786
 GameObject:
   m_ObjectHideFlags: 0

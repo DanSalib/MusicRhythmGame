@@ -18,6 +18,9 @@ public class MappingModeController : MonoBehaviour
     public AudioSource audio;
 
     public GameObject buttonPrefab;
+    public float scaleSensitivity;
+    private MappingButton curButton;
+    private Vector3 lastPosition = new Vector3();
 
     private Stopwatch mapTimer = new Stopwatch();
     
@@ -37,17 +40,35 @@ public class MappingModeController : MonoBehaviour
     // Update is called once per frame
     private void Update ()
     {
-        UpdatePositionLabel(Input.mousePosition.x, Input.mousePosition.y);
-        UpdateTimerLabel();
+        this.UpdatePositionLabel(Input.mousePosition.x, Input.mousePosition.y);
+        this.UpdateTimerLabel();
 
         if (this.mapTimer.IsRunning && Input.GetMouseButtonDown(0))
         {
             float[] position = new float[2];
             position[0] = Input.mousePosition.x;
             position[1] = Input.mousePosition.y;
-            mappedButtons.Add(this.mapTimer.ElapsedMilliseconds + this.GetSpeedInputVal(), position);
+            this.mappedButtons.Add(this.mapTimer.ElapsedMilliseconds + this.GetSpeedInputVal(), position);
 
-            CreateButton(position[0], position[1]);
+            this.curButton = this.CreateButton(position[0], position[1]);
+            this.lastPosition = Input.mousePosition;
+        }
+
+        if(Input.GetMouseButton(0) && this.curButton != null)
+        {
+            Vector3 diffPos = Input.mousePosition - this.lastPosition;
+
+            this.curButton.dragRegion.gameObject.transform.localScale += new Vector3(((Mathf.Abs(diffPos.x) + Mathf.Abs(diffPos.y)) * 1/60f * scaleSensitivity), 0f, 0f);
+            this.curButton.dragRegion.gameObject.transform.position += ((diffPos) * scaleSensitivity * 0.75f);
+
+            this.curButton.InitializeLastButton(Input.mousePosition.x, Input.mousePosition.y);
+            this.lastPosition = Input.mousePosition;
+        }
+
+        else if(Input.GetMouseButtonUp(0))
+        {
+            this.curButton = null;
+            this.lastPosition = new Vector3();
         }
 	}
 
@@ -56,16 +77,16 @@ public class MappingModeController : MonoBehaviour
         this.positionLabel.text = "x: " + x + ", y: " + y;
     }
 
-    private void CreateButton(float x, float y)
+    private MappingButton CreateButton(float x, float y)
     {
         GameObject button = Instantiate(buttonPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         button.transform.SetParent(this.transform, false);
 
         MappingButton mappingButton = button.GetComponent<MappingButton>();
         mappingButton.duration = this.GetSpeedInputVal();
-        mappingButton.InitializeButton(x, y);
+        mappingButton.InitializeFirstButton(x, y);
 
-        //this.displayingButtons.Add(clickTime, mappingButton);
+        return mappingButton;
     }
 
     private void ButtonsToHide(float start, float end)
