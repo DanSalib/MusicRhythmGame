@@ -161,12 +161,12 @@ public class MappingModeController : MonoBehaviour
         }
     }
 
-    private int GetSpeedInputVal()
+    private float GetSpeedInputVal()
     {
-        int speed = 1;
+        float speed = 1f;
         if (this.speedInput != null)
         {
-            int.TryParse(this.speedInput.text, out speed);
+            float.TryParse(this.speedInput.text, out speed);
         }
         return (speed*1000);
     }

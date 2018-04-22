@@ -299,11 +299,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 114342364261342276, guid: bc554b962397cea4d89373a81899c5a2,
-        type: 2}
-      propertyPath: gameDataFileName
-      value: test2.json
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bc554b962397cea4d89373a81899c5a2, type: 2}
   m_IsPrefabParent: 0

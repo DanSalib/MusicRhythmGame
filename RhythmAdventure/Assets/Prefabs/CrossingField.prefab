@@ -200,7 +200,7 @@ MonoBehaviour:
     type: 2}
   scoreLabel: {fileID: 114831959275899178}
   gameDataFileName: test1.json
-  gameSpeed: 2000
+  gameSpeed: 1400
 --- !u!114 &114513175322630458
 MonoBehaviour:
   m_ObjectHideFlags: 1
