@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    public GameController instance;
+    public MusicController musicController;
 
     public GameObject buttonPrefab;
     public Text scoreLabel;
@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
+        this.musicController.PlayAudio();
         this.gameTimer.Start();
         ButtonController.OnClicked += OnGameButtonClick;
 

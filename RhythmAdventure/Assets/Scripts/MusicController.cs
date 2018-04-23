@@ -14,12 +14,15 @@ public class MusicController : MonoBehaviour
 	void Start ()
     {
         LoadMusic();
+	}
 
-	    if(audio.clip != null)
+    public void PlayAudio()
+    {
+        if (audio.clip != null)
         {
             audio.Play();
         }
-	}
+    }
 	
 	// Update is called once per frame
 	void Update ()
