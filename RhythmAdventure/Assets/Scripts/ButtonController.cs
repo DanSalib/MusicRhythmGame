@@ -13,14 +13,19 @@ public class ButtonController : MonoBehaviour
     public Text startButtonText;
     public Text endButtonText;
     public Image indicator;
+    public IndicatorCollision indicatorCollision;
 
     const float ScaleSensitivity = 0.62f;
     private float startTime;
     public float duration;
-    public float buttonScore;
+    public float buttonScore = 0;
+
+    private bool isDrag = false;
+    private bool beginDragEvent = false;
 
     public delegate void ButtonClick(ButtonController button);
     public static event ButtonClick OnClicked;
+
 
     public void InitializeButton(float start, float startX, float startY, bool isDrag, float endX, float endY)
     {
@@ -29,7 +34,9 @@ public class ButtonController : MonoBehaviour
 
         this.startButton.transform.SetParent(this.gameObject.transform, false);
 
-        if(isDrag)
+        this.isDrag = isDrag;
+
+        if(this.isDrag)
         {
             SetupDragRegion(startX, endX, startY, endY);
         }
@@ -39,6 +46,7 @@ public class ButtonController : MonoBehaviour
         this.startTime = start;
         this.buttonTimer = new Stopwatch();
         this.buttonTimer.Start();
+
         StartCoroutine(this.ScaleIndicator());
     }
 
@@ -69,6 +77,20 @@ public class ButtonController : MonoBehaviour
             this.gameObject.SetActive(false);
             Destroy(this.gameObject);
         }
+        else if (Input.GetMouseButton(0) && this.beginDragEvent && this.indicatorCollision.isHit)
+        {
+            StartCoroutine(this.MoveIndicator());
+
+            this.buttonScore += 0.02f;
+        }
+        else if(Input.GetMouseButtonUp(0) && this.beginDragEvent)
+        {
+            this.buttonTimer.Stop();
+            OnClicked(this);
+
+            this.gameObject.SetActive(false);
+            Destroy(this.gameObject);
+        }
         //else if (this.gameButton != null && this.gameButton.gameObject.activeSelf)
         //{
         //    this.gameButton.image.color = new Vector4(1 - CalcColor(), CalcColor(), 0, 1);
@@ -77,13 +99,19 @@ public class ButtonController : MonoBehaviour
 
     public void ButtonClicked()
     {
-        float clickTime = this.buttonTimer.ElapsedMilliseconds;
-        this.buttonTimer.Stop();
-        this.buttonScore = CalcScore(clickTime);
-        this.startButton.gameObject.SetActive(false);
-        OnClicked(this);
+        if(this.isDrag)
+        {
+            this.beginDragEvent = true;
+        } else
+        {
+            float clickTime = this.buttonTimer.ElapsedMilliseconds;
+            this.buttonTimer.Stop();
+            this.buttonScore = CalcScore(clickTime);
+            OnClicked(this);
 
-        Destroy(this.gameObject);
+            this.gameObject.SetActive(false);
+            Destroy(this.gameObject);
+        }
     }
 
     public float CalcPerfectTime()
@@ -120,6 +148,21 @@ public class ButtonController : MonoBehaviour
             while(this.buttonTimer.ElapsedMilliseconds < (this.duration/2f))
             {
                 this.indicator.transform.localScale = Vector3.Lerp(originalScale, destinationScale, this.buttonTimer.ElapsedMilliseconds / (this.duration / 2f));
+                yield return null;
+            }
+        }
+    }
+
+    private IEnumerator MoveIndicator()
+    {
+        Vector3 originalLocation = this.indicator.transform.position;
+        Vector3 destination = this.endButton.transform.position;
+
+        if (this.buttonTimer.IsRunning)
+        {
+            while (this.buttonTimer.ElapsedMilliseconds < (this.duration))
+            {
+                this.indicator.transform.position = Vector3.Lerp(originalLocation, destination, this.buttonTimer.ElapsedMilliseconds / (this.duration / 2f));
                 yield return null;
             }
         }
