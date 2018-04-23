@@ -37,6 +37,8 @@ GameObject:
   - component: {fileID: 224667313066824494}
   - component: {fileID: 222030175133831624}
   - component: {fileID: 114831959275899178}
+  - component: {fileID: 114642574191800808}
+  - component: {fileID: 114031860084862200}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -184,6 +186,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+--- !u!114 &114031860084862200
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1456546100228878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.07560858, g: 0, b: 0.1544118, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114342364261342276
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -214,6 +230,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audio: {fileID: 82572507822435842}
   clipName: crossingField
+--- !u!114 &114642574191800808
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1456546100228878}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1573420865, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -2.77}
+  m_UseGraphicAlpha: 1
 --- !u!114 &114831959275899178
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -236,7 +266,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 25
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
@@ -246,7 +276,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'score: 0'
+  m_Text: 0
 --- !u!222 &222030175133831624
 CanvasRenderer:
   m_ObjectHideFlags: 1

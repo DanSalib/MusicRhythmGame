@@ -15,7 +15,8 @@ public class ButtonController : MonoBehaviour
     public Image indicator;
     public IndicatorCollision indicatorCollision;
 
-    const float ScaleSensitivity = 0.62f;
+    const float DragScoreModifier = 0.05f;
+
     private float startTime;
     public float duration;
     public float buttonScore = 0;
@@ -74,22 +75,20 @@ public class ButtonController : MonoBehaviour
     {
         if(this.startButton != null && this.startButton.gameObject.activeSelf && this.buttonTimer.ElapsedMilliseconds > this.duration)
         {
-            this.gameObject.SetActive(false);
-            Destroy(this.gameObject);
+            StartCoroutine(this.FadeAway());
         }
         else if (Input.GetMouseButton(0) && this.beginDragEvent && this.indicatorCollision.isHit)
         {
             StartCoroutine(this.MoveIndicator());
 
-            this.buttonScore += 0.02f;
+            this.buttonScore += ButtonController.DragScoreModifier;
         }
         else if(Input.GetMouseButtonUp(0) && this.beginDragEvent)
         {
             this.buttonTimer.Stop();
             OnClicked(this);
 
-            this.gameObject.SetActive(false);
-            Destroy(this.gameObject);
+            StartCoroutine(this.FadeAway());
         }
         //else if (this.gameButton != null && this.gameButton.gameObject.activeSelf)
         //{
@@ -105,12 +104,15 @@ public class ButtonController : MonoBehaviour
         } else
         {
             float clickTime = this.buttonTimer.ElapsedMilliseconds;
-            this.buttonTimer.Stop();
+            //this.buttonTimer.Stop();
             this.buttonScore = CalcScore(clickTime);
             OnClicked(this);
 
-            this.gameObject.SetActive(false);
-            Destroy(this.gameObject);
+
+            StartCoroutine(this.FadeAway());
+
+          //  this.gameObject.SetActive(false);
+            //Destroy(this.gameObject);
         }
     }
 
@@ -162,10 +164,57 @@ public class ButtonController : MonoBehaviour
         {
             while (this.buttonTimer.ElapsedMilliseconds < (this.duration))
             {
-                this.indicator.transform.position = Vector3.Lerp(originalLocation, destination, this.buttonTimer.ElapsedMilliseconds / (this.duration / 2f));
+                this.indicator.transform.position = Vector3.Lerp(originalLocation, destination, this.buttonTimer.ElapsedMilliseconds / (this.duration));
                 yield return null;
             }
         }
+    }
+
+    public IEnumerator FadeAway()
+    {
+        Color originalColor = this.startButton.image.color;
+        Color finalColor = new Color(this.startButton.image.color.r, this.startButton.image.color.g, this.startButton.image.color.b, 0);
+        Color finalTextColor = new Color(this.startButton.image.color.r, this.startButton.image.color.g, this.startButton.image.color.b, 0.25f);
+
+        Vector3 originalPosition = new Vector3();
+       if(this.isDrag)
+        {
+            originalPosition = this.endButtonText.transform.position;
+        } else
+        {
+            originalPosition = this.startButtonText.transform.position;
+
+        }
+        Vector3 destination = new Vector3(originalPosition.x, originalPosition.y + 50);
+
+        float ElapsedTime = 0.0f;
+        float TotalTime = 0.6f;
+        while (ElapsedTime < TotalTime)
+        {
+            ElapsedTime += Time.deltaTime;
+            this.startButton.image.color = Color.Lerp(originalColor, finalColor, (ElapsedTime / TotalTime));
+            this.endButton.image.color = Color.Lerp(originalColor, finalColor, (ElapsedTime / TotalTime));
+            this.dragRegion.color = Color.Lerp(originalColor, finalColor, (ElapsedTime / TotalTime));
+            this.indicator.color = Color.Lerp(originalColor, finalColor, (ElapsedTime / TotalTime));
+
+            if (this.isDrag)
+            {
+                this.endButtonText.text = (Mathf.RoundToInt((this.buttonScore * 1000) / 100) * 100).ToString();
+                this.endButtonText.gameObject.transform.position = Vector3.Lerp(originalPosition, destination, (ElapsedTime / TotalTime));
+            }
+            else
+            {
+                this.startButtonText.text = (Mathf.RoundToInt((this.buttonScore*1000)/100)*100).ToString();
+                this.startButtonText.gameObject.transform.position = Vector3.Lerp(originalPosition, destination, (ElapsedTime / TotalTime));
+            }
+
+            this.startButtonText.color = Color.Lerp(originalColor, finalColor, (ElapsedTime / TotalTime));
+            this.endButtonText.color = Color.Lerp(originalColor, finalColor, (ElapsedTime / TotalTime));
+
+            yield return null;
+        }
+
+        Destroy(this.gameObject);
     }
 
 }

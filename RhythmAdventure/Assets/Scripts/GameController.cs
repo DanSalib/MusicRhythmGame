@@ -94,13 +94,13 @@ public class GameController : MonoBehaviour
 
     public void OnGameButtonClick(ButtonController button)
     {
-        this.gameScore += Mathf.RoundToInt(button.buttonScore * 1000);
+        this.gameScore += (Mathf.RoundToInt((button.buttonScore * 1000) / 100) * 100);
         this.UpdateScoreLabel(gameScore);
     }
 
     private void UpdateScoreLabel(int scoreValue)
     {
-        this.scoreLabel.text = "score: " + scoreValue;
+        this.scoreLabel.text = scoreValue.ToString();
     }
 
     private int ButtonCountInitializer()
