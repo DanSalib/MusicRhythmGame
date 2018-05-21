@@ -115,7 +115,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 5017c6662c7a40847a8507160a999752, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -211,11 +211,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e4bd0dc821f35e4184f6928c351556f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instance: {fileID: 0}
+  musicController: {fileID: 114513175322630458}
   buttonPrefab: {fileID: 1701095029750306, guid: 47f1496fd930d0046a4931b92ac4e442,
     type: 2}
   scoreLabel: {fileID: 114831959275899178}
-  gameDataFileName: test2.json
+  gameDataFileName: test1.json
   gameSpeed: 2000
 --- !u!114 &114513175322630458
 MonoBehaviour:

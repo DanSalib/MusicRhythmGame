@@ -66,10 +66,8 @@ public class MappingModeController : MonoBehaviour
             this.curButton.InitializeLastButton(Input.mousePosition.x, Input.mousePosition.y);
             this.lastPosition = Input.mousePosition;
         }
-
         else if (Input.GetMouseButtonUp(0) && curButton != null)
         {
-
             ButtonItem button = new ButtonItem();
             button.time = this.curTime + this.GetSpeedInputVal();
 
@@ -84,7 +82,26 @@ public class MappingModeController : MonoBehaviour
             this.curButton = null;
             this.lastPosition = new Vector3();
         }
-	}
+
+        if (curButton != null && curButton.buttonTimer.ElapsedMilliseconds > curButton.duration)
+        {
+            ButtonItem button = new ButtonItem();
+            button.time = this.curTime + this.GetSpeedInputVal();
+
+            button.position[0] = this.curPosition[0];
+            button.position[1] = this.curPosition[1];
+            button.isDrag = this.curButton.isDrag;
+            button.endPosition[0] = this.lastPosition.x;
+            button.endPosition[1] = this.lastPosition.y;
+
+            this.mappedButtons.Add(button.time, button);
+
+            curButton.DestroyButton();
+
+            this.curButton = null;
+            this.lastPosition = new Vector3();
+        }
+    }
 
     private void UpdatePositionLabel(float x, float y)
     {

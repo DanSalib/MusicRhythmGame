@@ -75,6 +75,10 @@ public class ButtonController : MonoBehaviour
     {
         if(this.startButton != null && this.startButton.gameObject.activeSelf && this.buttonTimer.ElapsedMilliseconds > this.duration)
         {
+            this.buttonTimer.Stop();
+            this.buttonTimer.Reset();
+            OnClicked(this);
+
             StartCoroutine(this.FadeAway());
         }
         else if (Input.GetMouseButton(0) && this.beginDragEvent && this.indicatorCollision.isHit)
@@ -172,12 +176,18 @@ public class ButtonController : MonoBehaviour
 
     public IEnumerator FadeAway()
     {
+        Collider2D buttonCollider = this.indicator.GetComponent<CircleCollider2D>();
+        if(buttonCollider != null)
+        {
+            buttonCollider.enabled = false;
+        }
+
         Color originalColor = this.startButton.image.color;
         Color finalColor = new Color(this.startButton.image.color.r, this.startButton.image.color.g, this.startButton.image.color.b, 0);
         Color finalTextColor = new Color(this.startButton.image.color.r, this.startButton.image.color.g, this.startButton.image.color.b, 0.25f);
 
         Vector3 originalPosition = new Vector3();
-       if(this.isDrag)
+        if(this.isDrag)
         {
             originalPosition = this.endButtonText.transform.position;
         } else

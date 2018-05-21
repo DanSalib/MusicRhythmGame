@@ -28,15 +28,33 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        this.musicController.PlayAudio();
+        StartCoroutine(PlayMusicOnDelay(2f));
         this.gameTimer.Start();
         ButtonController.OnClicked += OnGameButtonClick;
 
         this.roundedButtonCount = this.ButtonCountInitializer();
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    private IEnumerator PlayMusicOnDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        this.musicController.PlayAudio();
+    }
+
+    private IEnumerator FadeOutMusic(float seconds)
+    {
+        float startVol = this.musicController.audio.volume;
+
+        while(this.musicController.audio.volume > 0)
+        {
+            this.musicController.audio.volume -= startVol * (Time.deltaTime / seconds);
+            yield return null;
+        }
+        this.musicController.audio.Stop();
+    }
+
+    // Update is called once per frame
+    void Update ()
     {
         if (this.gameButtons.Count > 0 && this.gameTimer.ElapsedMilliseconds > this.gameButtons.Keys[0])
         {
@@ -53,6 +71,9 @@ public class GameController : MonoBehaviour
 
             this.gameButtons.Remove(keyTime);
             this.roundedButtonCount--;
+        } else if (gameButtons.Count == 0)
+        {
+            StartCoroutine(this.FadeOutMusic(200f));
         }
 	}
 

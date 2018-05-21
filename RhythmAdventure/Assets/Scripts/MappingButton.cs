@@ -11,7 +11,7 @@ public class MappingButton : MonoBehaviour
     public Image dragRegion;
     public Text buttonText;
     public bool isDrag = false;
-    private Stopwatch buttonTimer = new Stopwatch();
+    public Stopwatch buttonTimer = new Stopwatch();
 
     private const float MinDrag = 75f;
 
@@ -51,9 +51,14 @@ public class MappingButton : MonoBehaviour
 
     private void Update()
     {
-        if(this.buttonTimer.ElapsedMilliseconds > duration)
+        if (this.buttonTimer.ElapsedMilliseconds > this.duration + 20)
         {
-            Destroy(this.gameObject);
+            this.DestroyButton();
         }
+    }
+
+    public void DestroyButton()
+    {
+        Destroy(this.gameObject);
     }
 }
