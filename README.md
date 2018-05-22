@@ -1,6 +1,8 @@
 # MusicRhythmGame
 VIDEO DEMO: https://www.youtube.com/watch?v=vT1lgWvAhAE
 
+This is a fan remake of the music rhythm game Osu!
+
 Click to the rhythm of your favourite songs!
 ![ca7129f5b35797eb279aceb2a935299e](https://user-images.githubusercontent.com/24818991/40291651-1a4b9af2-5c94-11e8-9960-f6ad99a6a97a.png)
 ![a3958aee038ca703237bf321dd62410d](https://user-images.githubusercontent.com/24818991/40291652-1b4acc8e-5c94-11e8-82bb-517060b773b1.png)
